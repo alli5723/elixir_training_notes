@@ -1,0 +1,942 @@
+# elixir_training_week1
+
+## Introduction to Elixir
+
+Elixir is a dynamic, `functional` and `concurrent` programming language that runs on the Erlang virtual machine.
+
+It is designed for building `scalable and maintainable` and `fault-tolerance` applications, with a lot of features enabled out of the box.
+
+We will introduce to you Elixir syntax, data types, modules, functions and control structures. You will also explore some of the most common tools and libraries that Elixir developers use, such as Mix, ExUnit, Ecto, Absinthe and Phoenix. We will also be covering some advanced concepts in Elixir.
+
+By the end of this tutorial, you will have a solid foundation to start your own Elixir projects or contribute to existing ones.
+
+To start, we will be installing Elixir by checking out the instructions on
+https://elixir-lang.org/getting-started/introduction.html
+
+#### Why is elixir special?
+
+* It is powered by a powerful virtual machine Beam VM
+* It is a functional programming language which makes coding
+* It makes building concurrent, distributed and fault tolerant application easy.
+* It scales very nicely
+* Concurrent processes do not share memory, hence no risk of race condition
+
+`$ elixir -v` after installation to check version
+
+<!-- livebook:{"break_markdown":true} -->
+
+#### Elixir Documentation Links
+
+https://elixir-lang.org/docs.html
+
+https://hexdocs.pm/elixir/1.15.4/Kernel.html
+
+https://hexdocs.pm/elixir/Kernel.SpecialForms.html
+
+## REPL (iex)
+
+One of the features of Elixir is the interactive shell, or iex, that allows you to execute Elixir code and see the results in real time.
+
+You can start iex by typing `iex` in your terminal. In iex, you can use all the built-in functions and modules of Elixir, as well as any libraries that you have installed in your project. You can also install new libraries within the iex session by using the `Mix.install/2` function. This function takes a list of dependencies and downloads and compiles them for you. For example, you can install the popular HTTP client library `HTTPoison` by typing `Mix.install([:httpoison])` in iex. Then you can use `HTTPoison` to make HTTP requests from iex.
+
+With REPL, we can also search more informaion about other functions. e.g. in the the iexi section we can run the command `h Mix.install` to read more help information about the function.
+
+```elixir
+# We can open an iex session, and try out an http request
+
+# install dependency
+# Mix.install([:httpoison])
+# HTTPoison.start
+# HTTPoison.get! "http://httparrot.herokuapp.com/get"
+```
+
+## Datatypes and Collections
+
+```elixir
+atom = :an_atom
+a_string = "A String"
+integer = 2
+float = 2.0
+boolean = true
+
+# NB: nil is also an atom
+# Check data types using the command below in iex console
+# i nil
+
+# list and tuple
+```
+
+before moving on to demonstrate collection types (lists, tuples, maps and structs), let's explore a couple of things we can already do with elixir.
+
+Below, we look at concepts like `Concatenation`, `Interpolation`, `binary matching`
+
+```elixir
+# Interpolation and other operations
+new_string = "Next " <> "year"
+year = 2024
+
+"#{new_string} will be #{year}"
+```
+
+```elixir
+# Introduce piping
+full_name = "James Kayode Dantata"
+
+full_name |> String.split(" ")
+```
+
+```elixir
+# We can also match strings based on binary
+<<country::binary-size(2), state::binary-size(3), account::binary>> = "NGLAG1122"
+
+IO.inspect("county is #{country}")
+IO.inspect("state is #{state}")
+IO.inspect("account is #{account}")
+
+# {
+#   country: "NG",
+#   state: "LAG",
+#   account: 1122
+# }
+```
+
+```elixir
+# Working with number bases
+<<0::1, 0::1, 1::1, 1::1>> == <<3::4>>
+```
+
+```elixir
+# Number 2 in binary = 1 0
+<<0::1, 1::1, 0::1>>
+```
+
+### Collections in Elixir (List, Tuples, Maps and Structs)
+
+```elixir
+list = ["a", 1, true, "SoLID", %{}]
+tuple = {:ok, "Good Feedback"}
+triple = {:error, "Failed to connect", "https://google.com"}
+
+atom_key_map = %{
+  name: "My Name"
+}
+
+string_key_map = %{
+  "name" => "My Name"
+}
+
+# List of map
+books_by_owners = [
+  %{
+    "name" => "Buchi",
+    "books" => [
+      "Tales by moonlight",
+      "A Particular Kind Of Black Man",
+      "Everything Good Will Come"
+    ]
+  },
+  %{
+    "name" => "Adamu",
+    "books" => ["The Madhouse", "Welcome to Lagos"]
+  }
+]
+
+# Experimentation with helper Modules
+# List. , Map. , Enum.
+```
+
+```elixir
+# List operations
+# list_concatenation and subtraction
+# Introducing pipe operation |>
+
+names = ["Akin", "Odeku", "Adesola"]
+names |> IO.inspect(label: "NAMES")
+
+updated_name_list = names ++ ["Bayero", "Kinshasa", "Calabar"]
+updated_name_list |> IO.inspect(label: "UPDATED LIST")
+
+reduced_list = updated_name_list -- ["Kinshasa"]
+reduced_list |> IO.inspect(label: "REDUCED LIST")
+
+List.first(reduced_list) |> IO.inspect(label: "FIRST NAME")
+```
+
+#### Structs
+
+<!-- livebook:{"break_markdown":true} -->
+
+A struct is similar to a map as we have demonstrated above, however, to create a struct we need to know about creating modules as will be described in the next section.
+
+Below is a sample of a struct, you can read on to better understand the new concepts like `modules` and `functions`
+
+```elixir
+# Kernel special forms __
+defmodule Code1 do
+  defmodule User do
+    defstruct name: "John", age: 27, height: 1.80
+
+    def print_module_name do
+      IO.inspect("#{__MODULE__} inside User")
+    end
+
+    def new(name, age, height \\ 1.6) do
+      if is_nil(age) do
+        # __MODULE__ instead of Code1.User??
+        %__MODULE__{
+          name: name,
+          height: height
+        }
+      else
+        %Code1.User{
+          age: age,
+          name: name,
+          height: height
+        }
+      end
+    end
+  end
+
+  def print_module_name do
+    IO.inspect("#{__MODULE__} inside Code1")
+  end
+
+  def show_name(%Code1.User{} = person) do
+    IO.inspect(person.name)
+    IO.inspect(person.age)
+    IO.inspect(person.height)
+  end
+end
+
+Code1.User.print_module_name()
+Code1.print_module_name()
+
+# Code1.show_name(Code1.User.new("Mary", 30))
+
+# Code1.show_name(Code1.User.new("Joseph", nil, 2.0))
+```
+
+## Modules, Functions and Control Statements
+
+In elixir, it is expected that a function is defined and implemented to do only one thing. A module is a collection of functions.
+
+```elixir
+defmodule NewModule do
+  def my_function do
+    IO.puts("Howdy! " <> my_private_function())
+  end
+
+  defp my_private_function, do: "John"
+end
+
+# NewModule.my_private_function()
+NewModule.my_function()
+```
+
+Anonymous functions
+
+```elixir
+my_fun = fn suffix ->
+  "A new world #{suffix}"
+end
+
+statement = my_fun.("awaits you!")
+statement
+```
+
+```elixir
+defmodule App.CBN do
+  def print_money(amount) do
+    IO.inspect("You want to print #{amount}")
+    print_money_privately()
+  end
+
+  def print_with_anonymous() do
+    func = fn -> IO.inspect("Printing Anonymously") end
+
+    func.()
+  end
+
+  def print_with_anonymous(amount) do
+    func = fn amnt -> IO.inspect("Printing #{amnt} Anonymously") end
+    func.(amount)
+  end
+
+  defp print_money_privately() do
+    IO.inspect("Printing money without noise")
+  end
+end
+
+# App.CBN.print_money(100)
+App.CBN.print_with_anonymous()
+App.CBN.print_with_anonymous(110)
+```
+
+When should we consider using the control flow options??
+
+```elixir
+# Case, Cond, With, If
+defmodule ModuleControl do
+  def start(name) do
+    case name do
+      "jack" -> "He is male"
+      "Jil" -> "She is a she!"
+    end
+  end
+
+  def use_cond do
+    country_code = "NG"
+
+    cond do
+      country_code == "NG" -> "Nigeria"
+      country_code == "GH" -> "Ghana"
+      country_code == "SA" -> "South Africa"
+      true -> "Other Countries"
+    end
+  end
+
+  def use_if do
+    if true do
+      "Always Matching"
+    else
+      "Never Matching"
+    end
+  end
+
+  def use_with do
+    with 1 <- 1 + 0,
+         2 <- 1 + 1 do
+      "This condition will always work"
+    end
+  end
+
+  def use_with_for_account do
+    account_number = %{
+      name: "olamide",
+      number: "AFWNGLAG1001",
+      amount: "10000000000",
+      region: %{
+        africa: %{
+          sub_region: %{
+            west_africa: %{
+              country: "Nigeria"
+            }
+          }
+        }
+      }
+    }
+
+    with %{name: "olamide"} <- account_number,
+         %{amount: amount} <- account_number,
+         {amount_int, ""} when amount_int > 1000 <- Integer.parse(amount),
+         %{region: %{africa: _}} <- account_number do
+      IO.inspect("Matches condition")
+    else
+      _account_data -> IO.inspect("Condition not matched")
+    end
+  end
+end
+
+ModuleControl.use_with_for_account()
+```
+
+```elixir
+num = 30
+# Correct case ordering
+case num do
+  n when n >= 30 -> "GREAT"
+  n when n >= 10 -> "GOOD"
+  _ -> "UNKNOWN"
+end
+
+# Wrong case ordering
+# case num do
+#   n when n >= 10 -> "GOOD"
+#   n when n >= 30 -> "GREAT"
+#   _ -> "UNKNOWN"
+# end
+```
+
+## Understanding the scope of variable values
+
+It is important to note that variables are scoped and often do not leak beyond the block they are defined in.
+
+We wil look at an example where we want to print `Pass` grade for scores between 71 - 90 (inclusive)
+
+```elixir
+grade = "distinction"
+score = 90
+
+case score do
+  v when v > 90 -> grade = "Distinction"
+  v when v > 70 -> grade = "Pass"
+  v when v > 50 -> grade = "Barely Passed"
+  _ -> grade = "Try again next time"
+end
+
+grade
+```
+
+From the example above, we will notice the follwoing:
+
+* We get a waring that says variable `grade` on lines 4,5,6,7 is unused
+* The grade value on line 1 `distinction` is the result printed from line 10.
+* The correct grade evaluation `Pass` does not get printed.
+
+In order to rebind the variable `grade` defined above with the expected value, we need to update our implementation as seen below.
+
+```elixir
+score = 90
+
+grade =
+  case score do
+    v when v > 90 -> "Distinction"
+    v when v > 70 -> "Pass"
+    v when v > 50 -> "Barely Passed"
+    _ -> "Try again next time"
+  end
+
+grade
+```
+
+## Anonymous functions
+
+```elixir
+defmodule MyAnonymousFunction do
+  def run() do
+    anonymous_func = fn data -> data[:name] end
+
+    get_user_data()
+    |> anonymous_func.()
+    |> IO.inspect(label: "The user's name is")
+  end
+
+  def get_user_data() do
+    %{
+      name: "Amina Daniel",
+      division: "Accounting"
+    }
+  end
+end
+
+MyAnonymousFunction.run()
+```
+
+```elixir
+# Passing function as a parameter
+defmodule FunctionAsParameter do
+  def run() do
+    anonymous_func = fn letter -> IO.inspect(letter) end
+
+    "Njideka Timpriye"
+    |> print(anonymous_func)
+  end
+
+  def print(data, print_fn) do
+    data
+    |> String.split("")
+    |> Enum.each(print_fn)
+  end
+end
+
+FunctionAsParameter.run()
+```
+
+## Capture Operator
+
+The Capture operator "&" is able to convert a function into an anonymous function.
+
+```elixir
+defmodule UseCaptureOperation do
+  def use_function_normally(names) do
+    names
+    |> Enum.each(fn d -> print_message(d) end)
+  end
+
+  def use_function_with_capture(names) do
+    names
+    |> Enum.each(&print_message/1)
+  end
+
+  def print_message(name) do
+    IO.inspect("Let's build something great for #{name}!!!")
+  end
+end
+
+UseCaptureOperation.use_function_normally(["User1", "User2"])
+
+UseCaptureOperation.use_function_with_capture(["User3", "User4"])
+```
+
+```elixir
+# Passing function as a parameter
+defmodule App.BankStatements do
+  @users [
+    %{
+      name: "Fodio",
+      amount: 200,
+      country: :NG
+    },
+    %{
+      name: "Silvia",
+      amount: 230,
+      country: :UK
+    },
+    %{
+      name: "Bakare",
+      amount: 130,
+      country: :SE
+    },
+    %{
+      name: "Maxwell",
+      amount: "305",
+      country: :CN
+    }
+  ]
+
+  # @spec run(integer, (any(), String.t() -> String.t())) :: String.t()
+  def run(user_id, printer) do
+    case Enum.at(@users, user_id) do
+      nil ->
+        "The user #{user_id} specified does not exist"
+
+      user ->
+        printer.(BalanceOutput.new(user))
+    end
+  end
+end
+
+defmodule BalanceOutput do
+  defstruct [:name, :amount, :currency]
+
+  def new(balance) do
+    %__MODULE__{
+      name: balance.name,
+      amount: balance.amount,
+      currency: currency(balance)
+    }
+  end
+
+  def currency(%{country: :NG}), do: "NGN"
+
+  def currency(%{country: :UK}), do: "£"
+
+  def currency(%{country: :SE}), do: "€"
+
+  def currency(%{country: :CN}), do: "YEN"
+
+  def currency(_), do: "M"
+end
+
+defmodule App.UserReporter do
+  def print_balance(%BalanceOutput{} = balance) do
+    "#{balance.name} has #{balance.currency} #{balance.amount} balance in his account"
+    |> IO.inspect()
+  end
+
+  def print_social_inference(%BalanceOutput{} = balance) do
+    statement =
+      case balance.amount do
+        amnt when amnt > 200 -> "above poverty"
+        _ -> "below poverty"
+      end
+
+    "#{balance.name} is living #{statement}"
+    |> IO.inspect()
+  end
+end
+
+App.BankStatements.run(1, &App.UserReporter.print_balance/1)
+App.BankStatements.run(1, &App.UserReporter.print_social_inference/1)
+
+App.BankStatements.run(2, &App.UserReporter.print_balance/1)
+App.BankStatements.run(2, &App.UserReporter.print_social_inference/1)
+```
+
+## Pattern Matching
+
+```elixir
+{msg, b, years} = {:hello, "world", 42}
+```
+
+```elixir
+years
+```
+
+```elixir
+defmodule PluralizeStatement do
+  @no_book "zero book"
+
+  def run do
+    readers()
+    |> Enum.map(fn reader -> format_as_string(reader) end)
+    |> IO.inspect()
+  end
+
+  defp format_as_string(%{"name" => reader_name, "books" => books}) do
+    book_count = get_book_count(books)
+    "#{reader_name} has read #{book_count}"
+  end
+
+  defp get_book_count(nil), do: @no_book
+  defp get_book_count([]), do: @no_book
+  defp get_book_count([_ | []]), do: "1 book"
+  defp get_book_count(books) when is_list(books), do: "#{length(books)} books"
+
+  defp readers do
+    [
+      %{
+        "name" => "Mary",
+        "books" => nil
+      },
+      %{
+        "name" => "Buchi",
+        "books" => [
+          "Tales by moonlight",
+          "A Particular Kind Of Black Man",
+          "Everything Good Will Come"
+        ]
+      },
+      %{
+        "name" => "Adamu",
+        "books" => ["The Madhouse", "Welcome to Lagos"]
+      },
+      %{
+        "name" => "Dare",
+        "books" => ["The Madhouse"]
+      },
+      %{
+        "name" => "Bello",
+        "books" => []
+      }
+    ]
+  end
+end
+
+PluralizeStatement.run()
+```
+
+## Recursion
+
+```elixir
+# Recursion
+# 1 1 2 3 5 8 13
+defmodule Fib do
+  def run_fib(0), do: 0
+  def run_fib(1), do: 1
+  def run_fib(n), do: run_fib(n - 1) + run_fib(n - 2)
+end
+
+# run_fib(4)
+# n = 4
+# run_fib(3) + run_fib(2)
+# 1 + 1 + 1
+# run_fib(1) 0
+Fib.run_fib(3)
+```
+
+```elixir
+# n! = n * (n-1) * (n-2) ...
+defmodule Factorial do
+  def run(num) do
+    run_factorial(num)
+  end
+
+  defp run_factorial(n) when n < 0 do
+    0
+  end
+
+  defp run_factorial(n) when n in [0, 1] do
+    1
+  end
+
+  defp run_factorial(n) do
+    n * run_factorial(n - 1)
+  end
+end
+
+Factorial.run(5)
+```
+
+```elixir
+defmodule RandomModule do
+  def function_no_args() do
+    IO.inspect("Hey!")
+  end
+
+  def function_one_arg(name \\ "Mike") do
+    IO.inspect("Hey! #{name}")
+  end
+end
+
+# RandomModule.function_no_args/0
+# RandomModule.function_one_arg/1
+RandomModule.function_one_arg("Joseph")
+```
+
+## Processes and Messages (Concurrency)
+
+In this section, we will be working with lightweight processes which makes concurrency a breeze.
+
+*Elixir has a couple of abstractions for concurrency namely: agents, tasks, generic servers.*
+
+Processes do not share memory hence they are safe and they own all resources they work with. This ensures that we could start multiple processes which do not intefere with each other.
+
+Processes are also lightweight which makes it possible to run thousands of them on a small machine to handle concurrent tasks.
+
+Processes can communicate with each other via messages
+
+```elixir
+# To see a map of processes
+:observer.start()
+```
+
+```elixir
+my_process_id = self()
+```
+
+```elixir
+Process.alive?(my_process_id)
+```
+
+By default, every code we write runs in a process, if we wanted to run a long running task in a different process of its own, we can use the process spawining implementation provided by Elixir `spawn(fn -> long_running_implementation() end)`, this returns a process_id which can be used to check the status of the newly created process.
+
+**Why do we potentially need to create a new process?**
+
+With a new process, we are able to execute long running tasks without blocking the main execution path. Imagine calling several APIs to complete a task, we could avoid synchronous calls if there is no need for such and create processes for individual calls instead
+
+```elixir
+# Spawn a new process to run a task
+new_process = spawn(fn -> 1 + 2 end)
+```
+
+```elixir
+# Calling an API several times synchronously
+1..20
+|> Enum.each(fn _ ->
+  IO.inspect("Running call in #{inspect(self())}")
+  Process.sleep(1000)
+  HTTPoison.get!("https://jsonplaceholder.typicode.com/comments")
+end)
+```
+
+```elixir
+# Calling the same API multiple times, each within its process
+1..20
+|> Enum.each(fn _ ->
+  spawn(fn ->
+    IO.inspect("Running call in #{inspect(self())}")
+    Process.sleep(1000)
+    HTTPoison.get!("https://jsonplaceholder.typicode.com/comments")
+  end)
+end)
+```
+
+Once, the task executed within the process above is completed, the process shuts down. We can confirm this by checking if the process is alive with the Process.alive?/1 function.
+
+```elixir
+Process.alive?(new_process)
+```
+
+We will follow additional lessons on process using the official documentation and experimenting with iex.
+https://elixir-lang.org/getting-started/processes.html
+
+```elixir
+send(self(), :hello)
+```
+
+```elixir
+# Receiving messages sent in a process,
+# it is important to note that "receive do" is a blocking operation
+
+receive do
+  {:hello, msg} -> IO.inspect("Reveived message #{msg}")
+  _ -> IO.inspect("Message not matched")
+end
+```
+
+```elixir
+send(self(), {:hello, "Team!"})
+```
+
+`receive` is a blocking operation, so it is advisable to run it in a process of its own, depending on the intention.
+
+The following lines will show us how we can easily block our iex session and the option for interrupting the blocked session.
+
+```elixir
+# When we run this in our iex session, it clugs the session (the process)
+# and we will not be able to continue, unless we interrupt the process
+
+# Get current process ID
+self()
+
+# Blocking the current iex process
+receive do
+  :ping -> "pong"
+end
+
+# Enter the user switch command
+# ctrl + g
+# --> i
+# --> c 1
+
+# To make sure the session is not blocked with the call to receive,
+# we can do that in a different process, by calling spawn session.
+pid_value =
+  spawn(fn ->
+    receive do
+      :ping -> IO.inspect("pong")
+    end
+  end)
+
+# Check if process is alive
+Process.alive?(pid_value)
+
+# Send PING to the spawned server above
+send(pid_value, :ping)
+
+# Check if process is alive
+Process.exit(pid_value, :shutdown)
+```
+
+#### spawn/1 VS spawn_link/1
+
+```elixir
+# We have the option of using spawn vs spawn_link
+# To see the difference of these 2 functions,
+# we should experiment with them.
+
+# Current process ID
+pid = self()
+
+# We should spawn a new process and execute a function that terminates the process
+spawn(fn -> Process.exit(self()) end)
+
+# We will realize the process ID remains the same even when the process above is terminated
+self()
+
+# Performing the same operation using spawn_link
+spawn_link(fn -> Process.exit(self()) end)
+
+# After the process above exits, we can check the process ID again
+self()
+# You will notice that the process ID has changed this time,
+# this is because, when we exited the spawned process, it exited the parent process also
+# and out iex process has changed
+```
+
+## Process cancellation and handling crashes
+
+We can terminate process by calling `Process.exit/2`. This can be called from anywhere also within the process concerned.
+
+```elixir
+# Process.exit(self(), :shutdown)
+```
+
+```elixir
+defmodule App.ProcessOps do
+  def server do
+    IO.inspect("Server is running on #{inspect(self())}")
+
+    receive do
+      {:balance, user_id, pid} ->
+        user_balance =
+          App.BankStatements.run(user_id, &App.UserReporter.print_balance/1)
+
+        IO.inspect("Sending balance to #{inspect(pid)}")
+        send(pid, {:balance, user_balance})
+        server()
+
+      {:social_inference, user_id, pid} ->
+        user_balance =
+          App.BankStatements.run(user_id, &App.UserReporter.print_social_inference/1)
+
+        IO.inspect("Sending social inference to #{inspect(pid)}")
+        send(pid, {:social_inference, user_balance})
+        server()
+
+      {:exit, pid} ->
+        IO.inspect("Exiting #{inspect(self())}")
+        send(pid, {:exit, self()})
+        Process.exit(self(), :shutdown)
+    end
+  end
+
+  def client do
+    IO.inspect("Client is running #{inspect(self())}")
+
+    server_pid = spawn(&App.ProcessOps.server/0)
+
+    server_status_check(server_pid)
+
+    send(server_pid, {:balance, 1, self()})
+
+    receive do
+      {:balance, balance} ->
+        IO.inspect("Received balance #{inspect(balance)}")
+    end
+
+    send(server_pid, {:social_inference, 1, self()})
+
+    receive do
+      {:social_inference, social_inference} ->
+        IO.inspect("Received social inference #{inspect(social_inference)}")
+    end
+
+    send(server_pid, {:exit, self()})
+
+    receive do
+      {:exit, pid} ->
+        IO.inspect("Received Exit signal from #{inspect(pid)}")
+    end
+
+    server_status_check(server_pid)
+  end
+
+  defp server_status_check(server_pid) do
+    case Process.alive?(server_pid) do
+      true -> IO.inspect("Server is alive")
+      false -> IO.inspect("Server is dead")
+    end
+  end
+end
+```
+
+## Name node with iex
+
+In order to connect several nodes of an elixir application to achieve distributed programming, it is possible to name an elixir node which enables us to identify every participant of a network communication.
+
+```elixir
+# Open a terminal and create an interactive session (iex) named "node1"
+iex -- sname(node1 -- cookie(secret))
+
+# Open a second terminal and open another session named "node2"
+iex -- sname(node1 -- cookie(secret))
+
+# We can check if the nodes are alive by using
+Node.alive?()
+```
+
+```elixir
+# Let's define code on the first node
+defmodule Hello do
+  def world, do: IO.puts("Hello there")
+end
+
+# On the second node we will attempt to execute this function from the first node
+Node.spawn(:node1@HOST, fn -> Hello.world() end)
+```
+
+## mix new and iex -S mix
+
+*NB:*
+
+* If you encounter issues while attempting to install a lib in your iex session, you should consider terminating the session and starting afresh.
+* If your current IEX session gets blocked, you can interrupt the blocking task by using the switch command.
+  `````
+  # Enter the user switch command
+  # ctrl + g
+  # --> i
+  # --> c 1
+  ````
+  `````
