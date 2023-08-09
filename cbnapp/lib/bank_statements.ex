@@ -1,5 +1,12 @@
 defmodule App.BankStatements do
-  # PATTERN MATCHIN AND CAPTURE OPERATOR
+  @moduledoc """
+  This module is responsible for generating bank statements for users
+  It demonstrates
+  - Pattern matching
+  - Function composition
+  - Capture Operator
+  - Invoking anonymous functions
+  """
   @users [
     %{
       name: "Fodio",
@@ -43,6 +50,16 @@ defmodule BalanceOutput do
     }
   end
 
+  @typedoc """
+  The user's balance map with the name, amount and country
+  """
+  @type user_balance :: %{
+    name: String.t(),
+    amount: String.t(),
+    country: atom()
+  }
+
+  @spec currency(user_balance) :: String.t()
   def currency(%{country: :NG}), do: "NGN"
 
   def currency(%{country: :UK}), do: "£"

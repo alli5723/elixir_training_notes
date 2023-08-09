@@ -1,6 +1,6 @@
 defmodule App.Tasking do
   def perform do
-    task = Task.async(fn -> do_some_work() end, 11000)
+    task = Task.async(fn -> do_some_work() end)
     execute_task()
     IO.inspect("Waiting for task to finish")
     Task.await(task)
