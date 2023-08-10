@@ -18,7 +18,8 @@ defmodule Demo.Application do
       DemoWeb.Endpoint,
       # Start a worker by calling: Demo.Worker.start_link(arg)
       # {Demo.Worker, arg}
-      {Demo.ExchangeWorker, []}
+      {Demo.ExchangeWorker, []},
+      {Demo.RatesSupervisor, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

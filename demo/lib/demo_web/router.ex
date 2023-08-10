@@ -20,6 +20,14 @@ defmodule DemoWeb.Router do
     get "/", PageController, :index
   end
 
+
+  scope "/api", DemoWeb do
+    pipe_through :api
+
+    get "/list_currencies", CurrencyController, :list
+    post "/get_rate", CurrencyController, :get_rate
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", DemoWeb do
   #   pipe_through :api

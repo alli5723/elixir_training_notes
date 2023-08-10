@@ -10,7 +10,6 @@ defmodule Demo.ExchangeWorker do
     GenServer.call(__MODULE__, :list_currencies)
   end
 
-
   ## Servers
   def init(_initial_value) do
     # currencies = Demo.XeAPI.list_currencies()
