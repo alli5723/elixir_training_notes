@@ -26,6 +26,8 @@ config :demo, DemoWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :demo, Demo.Mailer, adapter: Swoosh.Adapters.Local
 
+config :demo, Demo.ExchangeApi, adapter: Demo.ExchangeWorker
+
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 

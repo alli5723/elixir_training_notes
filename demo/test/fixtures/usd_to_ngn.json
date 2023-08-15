@@ -1,0 +1,13 @@
+{
+    "terms": "http://www.xe.com/legal/dfs.php",
+    "privacy": "http://www.xe.com/privacy.php",
+    "from": "USD",
+    "amount": 1.0,
+    "timestamp": "2023-08-12T00:00:00Z",
+    "to": [
+        {
+            "quotecurrency": "NGN",
+            "mid": 769.2022187283
+        }
+    ]
+}

@@ -11,7 +11,7 @@ defmodule Demo.RatesSupervisor do
     children = [
     %{
       id: FiatRatesWorker,
-      start: {RatesWorker, :start_link, [[{"EUR", "GBP"}, {"EUR", "USD"}, {"USD", "NGN"}]]},
+      start: {RatesWorker, :start_link, [[{"EUR", "GBP"}, {"EUR", "USD"}, {"USD", "NGN"}, {"NGN", "EUR"}]]},
       restart: :transient,
       type: :worker
     },

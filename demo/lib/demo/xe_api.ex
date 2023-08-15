@@ -4,6 +4,7 @@ defmodule Demo.XeAPI do
   @api_url "https://xecdapi.xe.com/v1"
 
   def list_currencies do
+    Logger.info("Listing currencies with xe_api")
     endpoint = @api_url <> "/currencies"
 
     endpoint
@@ -13,6 +14,7 @@ defmodule Demo.XeAPI do
 
   # function guard
   def get_rate(from, to \\ "EUR") when is_binary(from) and is_binary(to) do
+    Logger.info("Getting rate with xe_api FROM: #{from}  TO: #{to}")
     params = URI.encode_query(%{from: from, to: to})
     endpoint = @api_url <> "/convert_from?" <> params
 

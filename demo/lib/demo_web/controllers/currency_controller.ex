@@ -1,10 +1,20 @@
 defmodule DemoWeb.CurrencyController do
   use DemoWeb, :controller
-  alias Demo.ExchangeWorker
   alias Demo.Workers.RatesWorker
 
+  @exchange_worker Application.compile_env(:demo, Demo.ExchangeApi)[:adapter]
+
+  @moduledoc """
+  CurrencyController provides a JSON API for the currency exchange.
+
+  Two public functions are available:
+  - list: returns a list of all available currencies
+  - get_rate: returns the exchange rate between two currencies
+  """
+
+  @spec list(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def list(conn, _params) do
-    currencies = ExchangeWorker.list_currencies()
+    currencies = @exchange_worker.list_currencies()
     json(conn, currencies)
   end
 
