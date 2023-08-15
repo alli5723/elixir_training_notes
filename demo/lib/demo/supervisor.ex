@@ -1,5 +1,6 @@
 defmodule Demo.RatesSupervisor do
   use Supervisor
+  # TODO: Add module documentation
 
   alias Demo.Workers.RatesWorker
   def start_link(_init_) do

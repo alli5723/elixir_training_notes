@@ -1,12 +1,16 @@
 defmodule Demo.Workers.RatesWorker do
   use GenServer
+  # TODO: Add module documentation
 
   def start_link(pairs_list) do
     GenServer.start_link(__MODULE__, pairs_list, name: __MODULE__)
   end
 
   ## Client
+  # TODO: Add function documentation
+  # TODO: Add typespec
   def list_rates(), do: GenServer.call(__MODULE__, :list_rates)
+  # TODO: Add function documentation and typespec
   def get_rate(from, to), do: GenServer.call(__MODULE__, {:get_rate, {from, to}})
 
   ## Servers

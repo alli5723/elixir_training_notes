@@ -1,11 +1,14 @@
 defmodule Demo.ExchangeWorker do
   use GenServer
+  # TODO: Add module documentation
 
   def start_link(_init) do
     GenServer.start_link(Demo.ExchangeWorker, nil, name: __MODULE__)
   end
 
   ## Client
+  # TODO: Add function documentation
+  # TODO: Add typespec
   def list_currencies() do
     GenServer.call(__MODULE__, :list_currencies)
   end
