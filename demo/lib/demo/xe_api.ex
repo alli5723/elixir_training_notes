@@ -10,6 +10,10 @@ defmodule Demo.XeAPI do
     endpoint
     |> HTTPoison.get([], http_options())
     |> handle_http_response()
+    |> case do
+      {:ok, data} -> data
+      _ -> nil
+    end
   end
 
   # function guard
@@ -21,19 +25,27 @@ defmodule Demo.XeAPI do
     endpoint
     |> HTTPoison.get([], http_options())
     |> handle_http_response()
+    |> case do
+      {:ok, %{"to" => [%{"mid" => rate} | _]}} -> {:ok, rate}
+      _ -> {:error, "Invalid response from XE"}
+    end
   end
 
   def get_rate(_, _), do: {:error, "Invalid `from` arg ISO"}
 
-  defp handle_http_response({:ok, %HTTPoison.Response{body: body}}) do
-    case Jason.decode!(body) do
-      %{"to" => [%{"mid" => rate} | _]} ->
-        {:ok, rate}
+  defp handle_http_response({:ok, %HTTPoison.Response{body: body, status_code: code}}) when code in [200, 201] do
+    Jason.decode(body)
+  end
 
-      error ->
-        Logger.error("Xe communication failure #{inspect(error)}", error: error)
-        {:error, "Unexpected response from XE"}
-    end
+  defp handle_http_response({:ok, %HTTPoison.Response{body: body, status_code: _}}) do
+    reason = Jason.decode!(body)
+    Logger.error("Xe communication failure #{inspect(reason)}", reason: reason)
+    {:error, "Xe communication failure"}
+  end
+
+  defp handle_http_response({:error, %HTTPoison.Error{reason: reason}}) do
+    Logger.error("Xe communication failure #{inspect(reason)}", reason: reason)
+    {:error, "Xe communication failure"}
   end
 
   defp handle_http_response({:error, %HTTPoison.Error{reason: reason}}) do
@@ -43,6 +55,6 @@ defmodule Demo.XeAPI do
   end
 
   defp http_options() do
-    [hackney: [basic_auth: {"altecode756174953", "k8q9fic8ch01hbnern7fs2fqdl"}]]
+    [hackney: [basic_auth: {"rohehand696915617", "trsfe736dftcm83cvp168mugr"}]]
   end
 end
