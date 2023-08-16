@@ -12,14 +12,21 @@ defmodule DemoWeb.CurrencyController do
 
   @spec list(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def list(conn, _params) do
-    currencies = ExchangeWorker.list_currencies()
-    json(conn, currencies)
+    case Demo.Workflows.ListAllCurrencies.run() do
+      {:ok, currencies} ->
+        json(conn, currencies)
+      {:error, reason} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: reason})
+    end
   end
 
   # TODO: Improve the documentation for this function
   # TODO: Add explicit type for the function parameters change map() to actual type
-  @spec list(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def get_rate(conn, %{"to" => to, "from" => from} = params) do
+  @type pair_type :: %{to: String.t(), from: String.t()}
+  @spec list(Plug.Conn.t(), pair_type) :: Plug.Conn.t()
+  def get_rate(conn, %{"to" => to, "from" => from}) do
     rate = RatesWorker.get_rate(from, to)
 
     response = %{
@@ -29,6 +36,12 @@ defmodule DemoWeb.CurrencyController do
     }
 
     json(conn, response)
+  end
+
+  def get_rate(conn, _params) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: "Invalid parameters, please proved 'to' and 'from' in payload body"})
   end
 
 end
