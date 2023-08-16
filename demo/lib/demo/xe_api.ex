@@ -18,24 +18,28 @@ defmodule Demo.XeAPI do
     params = URI.encode_query(%{from: from, to: to})
     endpoint = @api_url <> "/convert_from?" <> params
 
-    %{"to" => [%{"mid" => rate} | _]} =
-      endpoint
-      |> HTTPoison.get([], http_options())
-      |> handle_http_response()
-
-    rate
+    endpoint
+    |> HTTPoison.get([], http_options())
+    |> handle_http_response()
   end
 
   def get_rate(_, _), do: {:error, "Invalid `from` arg ISO"}
 
-  defp handle_http_response(http_response) do
-    case http_response do
-      {:ok, %HTTPoison.Response{body: body}} ->
-        Jason.decode!(body)
+  defp handle_http_response({:ok, %HTTPoison.Response{body: body}}) do
+    case Jason.decode!(body) do
+      %{"to" => [%{"mid" => rate} | _]} ->
+        {:ok, rate}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error("Xe communication failure #{inspect(reason)}", reason: reason)
+      error ->
+        Logger.error("Xe communication failure #{inspect(error)}", error: error)
+        {:error, "Unexpected response from XE"}
     end
+  end
+
+  defp handle_http_response({:error, %HTTPoison.Error{reason: reason}}) do
+    Logger.error("Xe communication failure #{inspect(reason)}", reason: reason)
+
+    {:error, "Unexpected response from XE"}
   end
 
   defp http_options() do
