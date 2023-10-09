@@ -11,7 +11,8 @@ defmodule DemoWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["api"]
+    # plug(Demo.BreakPlug) --> Just to demo middlewares
   end
 
   scope "/", DemoWeb do

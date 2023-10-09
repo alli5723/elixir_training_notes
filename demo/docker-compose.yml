@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  demo_app:
+    restart: always
+    build: .
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      MIX_ENV: "prod"
+      DATABASE_URL: "ecto://postgres:password@db:5432/demo_prod"
+      SECRET_KEY_BASE: f9yth2Fc7Ii1Y8qh8zqlFBjb9fLxLJi5ZCCLPiOSydP
+    command: "mix phx.server"
+    networks:
+      - backend
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      # POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: demo_prod
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+
+networks:
+  backend:
+    driver: bridge

@@ -23,8 +23,10 @@ config :demo, DemoWeb.Endpoint,
 # In test we don't send emails.
 config :demo, Demo.Mailer, adapter: Swoosh.Adapters.Test
 
+config :demo, Demo.ExchangeApi, adapter: Demo.FakeExchangeWorker
+
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

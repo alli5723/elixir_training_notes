@@ -34,7 +34,7 @@ defmodule Demo.Workers.RatesWorker do
     pairs_rates =
       Enum.reduce(list_of_pairs, %{}, fn {from, to}, acc ->
         case Demo.XeAPI.get_rate(from, to) do
-          rate when is_float(rate) ->
+          {:ok, rate} when is_float(rate) ->
             Map.put(acc, "#{from}/#{to}", rate)
 
           _ ->
